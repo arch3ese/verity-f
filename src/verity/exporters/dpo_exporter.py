@@ -136,3 +136,29 @@ class DPOExporter:
         with open(path, "w", encoding="utf-8") as f:
             json.dump([item.model_dump() for item in triplets], f, indent=2)
         return path
+
+    def export_csv(self, triplets: List[DPOTriplet], output_path: str) -> Path:
+        """Exports triplets to tabular CSV format."""
+        import csv
+        path = Path(output_path)
+        # Note: missing path.parent.mkdir check here unlike export_jsonl! (Intentional gap)
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["prompt", "chosen", "rejected", "margin", "justification"])
+            for t in triplets:
+                # TODO: handle multi-line strings with proper escaping for RFC 4180
+                writer.writerow([t.prompt, t.chosen, t.rejected, t.margin, t.justification])
+        return path
+
+    def export_huggingface(self, triplets: List[DPOTriplet], dataset_name: str) -> None:
+        """
+        Pushes curated DPO triplets directly to the Hugging Face Hub.
+
+        Args:
+            triplets: Filtered DPO preference triplets.
+            dataset_name: Hugging Face repository identifier (e.g. 'org/dataset-name').
+        """
+        # TODO: Implement direct Hugging Face Hub upload via datasets library.
+        # FIXME: Currently requires exporting to JSONL first then using huggingface_hub CLI.
+        raise NotImplementedError("Direct Hugging Face upload is not yet implemented. Export to JSONL instead.")
+

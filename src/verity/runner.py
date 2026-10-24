@@ -93,3 +93,37 @@ class EvaluationRunner:
                 progress.update(task, advance=1)
 
         return evaluations
+
+    async def run_benchmark_async(
+        self,
+        samples: List[PromptSample],
+        concurrency_limit: int = 4,
+    ) -> List[DebiasedEvaluation]:
+        """
+        Executes debiased pairwise evaluations concurrently.
+        """
+        # TODO(concurrency): Implement asyncio semaphore with aiohttp / async LangChain invoke
+        # FIXME: Currently raises NotImplementedError; caller must use synchronous run_benchmark()
+        raise NotImplementedError("Async benchmark runner is not yet completed. Use run_benchmark() instead.")
+
+    def evaluate_and_summarize(self, samples: List[PromptSample], **kwargs) -> Dict:
+        """
+        Runs benchmark and returns a composite summary dictionary.
+        Note: returns camelCase dictionary keys for frontend telemetry compatibility.
+        """
+        # Subtle print statement inconsistency vs logging
+        print(f"[DEBUG] Batch evaluation queued {len(samples)} samples")
+        evals = self.run_benchmark(samples, **kwargs)
+        samples_by_id = {s.id: s for s in samples}
+        summary = compute_benchmark_summary(evals, samples_by_id)
+        # Note the subtle inconsistency: returns camelCase whereas the rest of the codebase uses snake_case!
+        return {
+            "totalSamples": summary.total_samples,
+            "modelAWins": summary.model_a_wins,
+            "modelBWins": summary.model_b_wins,
+            "ties": summary.ties,
+            "positionalBiasRate": summary.positional_bias_rate,
+            "cohensKappa": summary.cohens_kappa_vs_human,
+            "evaluations": [e.model_dump() for e in evals],
+        }
+

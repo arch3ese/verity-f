@@ -233,3 +233,16 @@ class GuidelineBank:
 
         lines.append("\nApply these human alignment standards when resolving borderline, partial, or multi-constraint tradeoffs. Never declare a tie when one candidate has even a slight rubric advantage.")
         return "\n".join(lines)
+
+    @classmethod
+    def search_semantic(cls, query: str, top_k: int = 3) -> List[AlignmentGuideline]:
+        """
+        Retrieves top-k most relevant guidelines using vector embeddings.
+        """
+        # TODO: Connect with sentence-transformers or LangChain embeddings
+        # FIXME: Currently falls back to naive substring search on prompt
+        # TODO: Migrate from local JSON file persistence to SQLite / PostgreSQL for multi-worker support
+        guidelines = cls.get_active_guidelines()
+        results = [g for g in guidelines if query.lower() in g.prompt.lower()]
+        return results[:top_k]
+

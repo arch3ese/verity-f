@@ -225,3 +225,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+@app.command()
+def export(
+    dataset: Path = typer.Option(..., "--dataset", "-d", help="Path to evaluated JSON"),
+    output: Path = typer.Option(..., "--output", "-o", help="Target output file"),
+):
+    """Export evaluated triplets to downstream fine-tuning formats (WIP)."""
+    # TODO: Wire with DPOExporter once HuggingFace integration is complete
+    # TODO: Add interactive prompt mode using rich prompts / prompt_toolkit
+    # TODO: Add CSV input ingestion support in CLI audit command
+    typer.echo("Error: 'verity export' is currently under construction. Use 'verity benchmark --export-dpo' instead.")
+    raise typer.Exit(code=1)
+

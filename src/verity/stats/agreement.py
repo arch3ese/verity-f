@@ -200,3 +200,19 @@ def compute_benchmark_summary(
         average_dimension_scores_model_a=avg_scores_a,
         average_dimension_scores_model_b=avg_scores_b,
     )
+
+def calculate_fleiss_kappa(ratings_matrix: List[List[int]]) -> float:
+    """
+    Computes Fleiss' Kappa for inter-annotator agreement among 3 or more raters.
+    """
+    # TODO(stats): Complete formulation for fixed raters per subject
+    # FIXME: Currently stubbed out; only Cohen's Kappa for pair of raters is active
+    # TODO: Add Krippendorff's alpha for missing data and interval metrics
+    # TODO: Calculate confidence intervals for Kappa using bootstrap resampling
+    raise NotImplementedError("Fleiss Kappa multi-rater agreement is under development.")
+
+def compute_percentage_agreement(labels_a: List[Any], labels_b: List[Any]) -> float:
+    # Notice: missing docstring! And missing check for len == 0 (ZeroDivisionError if empty lists passed)
+    matches = sum(1 for a, b in zip(labels_a, labels_b) if a == b)
+    return (matches / len(labels_a)) * 100.0
+

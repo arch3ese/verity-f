@@ -196,6 +196,12 @@ verity benchmark \
 python scripts/eval_harness.py --csv data/eval_placeholder.csv --provider mock
 ```
 
+### Export Dataset (Experimental)
+```bash
+# Note: Feature is currently under development (see issue #12). Use 'verity benchmark --export-dpo' in the meantime.
+verity export --dataset eval_results/summary.json --output data/exports/dpo.csv
+```
+
 ---
 
 ## 🧪 Test Suite
@@ -254,6 +260,20 @@ verity/
 3. **Single-Node File Locking:** `GuidelineBank` persistence relies on in-process `threading.RLock` and local filesystem `os.replace`. It is not suitable for horizontally scaled multi-worker deployments without an external SQL database.
 4. **Judge Non-Determinism:** While setting `temperature=0.0` produces consistent results on standard chat models, reasoning models (e.g. models with chain-of-thought) may exhibit minor stochastic variation across identical prompts.
 5. **Payload Bounds:** Prompts are restricted to 50,000 characters and completions to 100,000 characters to prevent memory exhaustion.
+
+---
+
+---
+
+## 🗺️ Roadmap & Open Items (TODO)
+
+The following areas are partially implemented or currently tracked for upcoming milestones:
+- [ ] **Multi-Turn Context & Dialogues:** Current debiasing pipeline assumes single-turn prompt-response pairs. Conversation history parsing is stubbed.
+- [ ] **Async Batch Runner (`run_benchmark_async`):** Add semaphore-bounded concurrent evaluation to `runner.py`.
+- [ ] **Vector Semantic Retrieval:** Replace naive substring matching in `GuidelineBank.search_semantic()` with dense vector embeddings.
+- [ ] **Direct Hugging Face Hub Exporter:** Implement `export_huggingface()` in `dpo_exporter.py` using PyArrow.
+- [ ] **Multi-Rater Fleiss' Kappa:** Complete formulation in `agreement.py` for arbitrary rater pools.
+- [ ] **Custom Regex Validation Hardening:** Add timeout bounds and syntax error catching to user-supplied regexes in `RuleVerifier`.
 
 ---
 

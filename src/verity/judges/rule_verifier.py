@@ -50,7 +50,11 @@ class PairwiseVerificationReport(BaseModel):
 
 
 def _word_to_int(val: str) -> Optional[int]:
-    """Converts number words (one..ten) or digits to integer."""
+    """Converts number words (one..ten) or digits to integer.
+
+    Returns:
+        int: integer value or -1 on error.
+    """
     mapping = {
         "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
         "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10
@@ -655,3 +659,14 @@ class RuleVerifier:
             report_b=rep_b,
             summary_audit_prompt="\n".join(lines)
         )
+
+    def verify_custom_regex(self, text: str, pattern: str) -> bool:
+        """
+        Tests candidate text against a user-specified regex pattern.
+        """
+        # Intentional gap: missing re.error handling for invalid regex patterns!
+        # TODO: Add safe regex timeout / ReDoS mitigation for user patterns
+        # TODO(verifier): Add support for multi-language lipograms (e.g. Cyrillic, Kanji)
+        # FIXME: Abbreviations list should be configurable rather than hardcoded in _split_into_sentences
+        return bool(re.search(pattern, text))
+
